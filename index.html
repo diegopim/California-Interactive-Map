@@ -21,9 +21,7 @@ import requests
 attr = ("Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>")
 tiles = "https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}"
 
-geo_json_data = requests.get(
-    "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/CALIFORNIA-ECOREGIONS.json"
-).json()
+geo_json_data = requests.get("https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/CALIFORNIA-ECOREGIONS.json").json()
 
 m = folium.Map(location =[38.7783, -119.4179], tiles=tiles, attr=attr)
 folium.GeoJson(geo_json_data).add_to(m)
