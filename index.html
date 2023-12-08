@@ -16,17 +16,17 @@
     <py-script output="map">
 import folium
 import pandas
-import json
-
-from pyodide.http import open_url
+import requests
 
 attr = ("Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>")
 tiles = "https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}"
 
-#url = https://tiles.arcgis.com/tiles/jUJYIo9tSA7EHvfZ/arcgis/rest/services/Ecoregions_FCAT/MapServer/0
-#ecoregions_json = json.load(open_url(url))
+geo_json_data = requests.get(
+    "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/CALIFORNIA-ECOREGIONS.json"
+).json()
 
 m = folium.Map(location =[38.7783, -119.4179], tiles=tiles, attr=attr)
+folium.GeoJson(geo_json_data).add_to(m)
 m
     </py-script>
 
