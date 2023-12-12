@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
     <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
@@ -13,20 +14,144 @@
 </head>
 <body>
     <div id="map" style="width: 100%; height:100%"></div>
+
     <py-script output="map">
 import folium
-import pandas
-import requests
+import json
 
-attr = ("Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>")
+from folium.plugins import Geocoder
+from pyodide.http import open_url
+
+class ecoregion:
+    def __init__(self, name, json_link):
+        self.name = name
+
+        """
+        iframe = branca.element.IFrame(html=info, width=500, height=300)
+        test = folium.Html(info, script=True)
+        self.popup = folium.Popup(iframe, max_width=500)
+        """
+        self.popup = folium.GeoJsonPopup(
+            labels= False, fields=["html"],
+            localize=True,
+            style="background-color: yellow;",
+        )
+
+        self.tooltip = folium.GeoJsonTooltip(
+            fields=["NA_L3NAME"], labels=False
+        )
+        
+        self.geo_json = json.loads(open_url(json_link).read())
+
+
+attr = "Tiles courtesy of the <a href='https://usgs.gov/'>U.S. Geological Survey</a>"
 tiles = "https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}"
 
-geo_json_data = requests.get("https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/CALIFORNIA-ECOREGIONS.json").json()
+"""
+regions = [
+    ecoregion("California High North Coast Range",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/California%20High%20North%20Coast%20Range.json",
+        "
+        The California High North Coast Range, also known as the Klamath Mountains, is a rugged mountainous region spanning 14 million acres. The region is characterized by its wet climate, having the highest precipitation levels in the state, which feeds over ten river systems.
+        The North Coast Range is mostly conifer forest, but also contains chaparral stands, riparian forests, and wetlands. The North Coast Range contains unique features, like Redwood trees which are among the biggest, tallest, and oldest trees in the world.
+	    Notable areas in this region include the Klamath River Ridges or the Trinity Mountains.
+        ",
+        "#dceabd"),
 
-m = folium.Map(location =[38.7783, -119.4179], tiles=tiles, attr=attr)
-folium.GeoJson(geo_json_data).add_to(m)
+    ecoregion("Pacific Coast Range",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Pacific%20Coast%20Range.json",
+        "Bonjour",
+        "#dfe4ed"),
+
+    ecoregion("Central California Foothills and Coastal Mountains",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Central%20Cal%20Foothills%20%26%20Coastal%20Mts.json",
+        "What's Up",
+        "#f9e282"),
+
+    ecoregion("California Central Valley", 
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/central_valley.json",
+        "Hello",
+        "#00A36C"),
+    
+    ecoregion("Sierra Nevada",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Sierra%20Nevada.json",
+        "sup",
+        "#add8e6"),
+
+    ecoregion("Southern California Deserts (Mojave)",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Mojave.json",
+        "bonjour",
+        "#ffffff"),
+
+    ecoregion("Southern California Deserts (Sonoran)",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Sonoran%20Desert.json",
+        "bonjour",
+        "#ffffff"),
+
+    ecoregion("Southern California Coast",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Southern%20California%20Coast.json",
+        "Greetings",
+        "#fdd3ac"),
+    
+    ecoregion("Cascades",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Cascades.json",
+        "Hola",
+        "#fdd3ac")
+]
+"""
+
+regions = [
+    ecoregion("Pacific Coast Range",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Pacific%20Coast%20Range.json"
+    ),
+
+    ecoregion("California High North Coast Range",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/California%20High%20North%20Coast%20Range.json"
+    ),
+
+    ecoregion("Cascades",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Cascades.json"
+    ),
+
+    ecoregion("Central California Foothills and Coastal Mountains",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Central%20Cal%20Foothills%20%26%20Coastal%20Mts%20(1).json"
+    ),
+
+    ecoregion("California Central Valley", 
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/central_valley.json"
+    ),
+
+    ecoregion("Sierra Nevada",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Sierra%20Nevada.json"
+    ),
+
+    ecoregion("Southern California Deserts",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Southern%20Californian%20Deserts.json"
+    ),
+
+    ecoregion("Southern California Coast",
+        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Southern%20California%20Coast.json"
+    )
+]
+
+m = folium.Map(location=[48, -102], zoom_start=3)
+for region in regions:
+    folium.GeoJson(region.geo_json, 
+    style_function=lambda feature: {
+        "fillColor": "#fdd3ac",
+        "color": "black",
+        "weight": 2,
+    }, 
+    highlight_function=lambda x: {
+        'fillColor': 'blue', # stroke becomes red
+        'weight': 4,
+    },
+    tooltip=region.tooltip,
+    popup=region.popup,
+    ).add_to(m)
+
+Geocoder().add_to(m)
 m
     </py-script>
-
 </body>
 </html>
