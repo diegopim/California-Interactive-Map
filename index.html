@@ -13,24 +13,18 @@
     <title>Ecoregions of California</title>
 </head>
 <body>
+    <button onclick="document.location='https://www.w3schools.com/html/html_links.asp'">Sources</button>
     <div id="map" style="width: 100%; height:100%"></div>
-
     <py-script output="map">
 import folium
 import json
+import pandas as pd
 
-from folium.plugins import Geocoder
 from pyodide.http import open_url
 
 class ecoregion:
-    def __init__(self, name, json_link):
-        self.name = name
+    def __init__(self, json_link):
 
-        """
-        iframe = branca.element.IFrame(html=info, width=500, height=300)
-        test = folium.Html(info, script=True)
-        self.popup = folium.Popup(iframe, max_width=500)
-        """
         self.popup = folium.GeoJsonPopup(
             labels= False, fields=["html"],
             localize=True,
@@ -47,94 +41,43 @@ class ecoregion:
 attr = "Tiles courtesy of the <a href='https://usgs.gov/'>U.S. Geological Survey</a>"
 tiles = "https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}"
 
-"""
 regions = [
-    ecoregion("California High North Coast Range",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/California%20High%20North%20Coast%20Range.json",
-        "
-        The California High North Coast Range, also known as the Klamath Mountains, is a rugged mountainous region spanning 14 million acres. The region is characterized by its wet climate, having the highest precipitation levels in the state, which feeds over ten river systems.
-        The North Coast Range is mostly conifer forest, but also contains chaparral stands, riparian forests, and wetlands. The North Coast Range contains unique features, like Redwood trees which are among the biggest, tallest, and oldest trees in the world.
-	    Notable areas in this region include the Klamath River Ridges or the Trinity Mountains.
-        ",
-        "#dceabd"),
+    #Pacific Coast Range
+    ecoregion("https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Pacific%20Coast%20Range.json"),
 
-    ecoregion("Pacific Coast Range",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Pacific%20Coast%20Range.json",
-        "Bonjour",
-        "#dfe4ed"),
-
-    ecoregion("Central California Foothills and Coastal Mountains",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Central%20Cal%20Foothills%20%26%20Coastal%20Mts.json",
-        "What's Up",
-        "#f9e282"),
-
-    ecoregion("California Central Valley", 
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/central_valley.json",
-        "Hello",
-        "#00A36C"),
+    #California High North Coast Range
+    ecoregion("https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/California%20High%20North%20Coast%20Range.json"),
     
-    ecoregion("Sierra Nevada",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Sierra%20Nevada.json",
-        "sup",
-        "#add8e6"),
+    #Cascades
+    ecoregion("https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Cascades.json"),
 
-    ecoregion("Southern California Deserts (Mojave)",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Mojave.json",
-        "bonjour",
-        "#ffffff"),
+    #Central California Foothills and Coastal Mountains
+    ecoregion("https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Central%20Cal%20Foothills%20%26%20Coastal%20Mts%20(1).json"),
 
-    ecoregion("Southern California Deserts (Sonoran)",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Sonoran%20Desert.json",
-        "bonjour",
-        "#ffffff"),
+    #California Central Valley
+    ecoregion("https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/central_valley.json"),
 
-    ecoregion("Southern California Coast",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Southern%20California%20Coast.json",
-        "Greetings",
-        "#fdd3ac"),
-    
-    ecoregion("Cascades",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Cascades.json",
-        "Hola",
-        "#fdd3ac")
-]
-"""
+    #Sierra Nevada
+    ecoregion("https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Sierra%20Nevada.json"),
 
-regions = [
-    ecoregion("Pacific Coast Range",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Pacific%20Coast%20Range.json"
-    ),
+    #Southern California Deserts
+    ecoregion("https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Southern%20Californian%20Deserts.json"),
 
-    ecoregion("California High North Coast Range",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/California%20High%20North%20Coast%20Range.json"
-    ),
-
-    ecoregion("Cascades",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Cascades.json"
-    ),
-
-    ecoregion("Central California Foothills and Coastal Mountains",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Central%20Cal%20Foothills%20%26%20Coastal%20Mts%20(1).json"
-    ),
-
-    ecoregion("California Central Valley", 
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/central_valley.json"
-    ),
-
-    ecoregion("Sierra Nevada",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Sierra%20Nevada.json"
-    ),
-
-    ecoregion("Southern California Deserts",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Southern%20Californian%20Deserts.json"
-    ),
-
-    ecoregion("Southern California Coast",
-        "https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Southern%20California%20Coast.json"
-    )
+    #Southern California Coast
+    ecoregion("https://raw.githubusercontent.com/diegopim/California-Interactive-Map/main/Ecoregions%20JSON/Southern%20California%20Coast.json")
 ]
 
-m = folium.Map(location=[48, -102], zoom_start=3)
+data = pd.DataFrame({
+    'lon':[-124.1637, -122.9913, -124.0417, -122.4790, -122.8521, -122.3106, -121.4207, -122.4194, -121.6555, -121.9142, -121.4944, -119.0187, -121.8427, -120.0324, -119.5383, -118.2923, -116.27, -116.9325, -116.5453, -118.2426, -117.1611, -116.8800],
+    'lat':[40.8021,    38.0178,   41.4017,   41.3196,   41.8352,   41.3099,   40.4977,   37.7749,   36.6777,   37.8816,   38.5816,   35.3733,   38.0680,   39.0968,   37.8651,   36.5785,   34.1,   36.5323,   33.8303,   34.0549,   32.7157,   34.1300],
+    'name':['Eureka', 'Point Reyes', 'Redwood National Park', 'Mount Eddy', 'Klamath River', 'Mount Shasta', 
+            'Lassen Volcanic National Park', 'San Francisco', 'Salinas', 'Mount Diablo', 'Sacramento', 'Bakersfield', 
+            'Sacramento-San Joaquin Delta', 'Lake Tahoe', 'Yosemite National Park', 'Mount Whitney', ' Joshua Tree Forest', 'Death Valley', 
+            'Palm Springs', 'Los Angeles', 'San Diego', 'San Bernardino Mountains'] 
+ }, dtype=str)
+ 
+
+m = folium.Map(location=[36, -119], zoom_start=6)
 for region in regions:
     folium.GeoJson(region.geo_json, 
     style_function=lambda feature: {
@@ -150,8 +93,15 @@ for region in regions:
     popup=region.popup,
     ).add_to(m)
 
-Geocoder().add_to(m)
+for i in range(0,len(data)):
+    folium.Marker(
+       location=[data.iloc[i]['lat'], data.iloc[i]['lon']],
+       popup=data.iloc[i]['name'],
+    ).add_to(m)
+
 m
     </py-script>
+
+    
 </body>
 </html>
